@@ -4,6 +4,7 @@ Client.prototype = {
   LOAD_SOCKET_IO_COMPLETE : "loadSocketIoComplete",
   socket : null,
   server : null,
+  notificationBaseUrl : null,
 
   /**
    * @type {Object} {target : [logの通知を一時的にスキップするか？] }
@@ -43,11 +44,30 @@ Client.prototype = {
         this.close();
       },
       timeout : 5000,
-      title : "Logg",
+      title : "Logs",
       icon : ""
     };
-    console.log(defaultArgs);
+    if(this.notificationBaseUrl){
+      defaultArgs.timeout = 0;
+      defaultArgs.onclick = undefined;
+      defaultArgs.onerror = undefined;
+    }
     var mergedArgs = $.extend(defaultArgs, notificationArgs);
+
+    //url構築
+    if(this.notificationBaseUrl && mergedArgs.url == undefined){
+      var param = $.param({
+        title : mergedArgs.title,
+        message : mergedArgs.content
+      },true);
+      if(notificationArgs.url_params){
+        var notificationArgsParam = $.param(mergedArgs.url_params);
+        param = param + "&" + notificationArgsParam;
+      }
+      mergedArgs.url = this.notificationBaseUrl + "?" + param
+
+    }
+
     $.notification(mergedArgs).show();
   },
 
@@ -83,25 +103,32 @@ Client.prototype = {
   bindSocketEvent : function(){
     var self = this;
     self.socket = io.connect(self.server); //socketはひとつだけ持つ。
-    self.socket.on('connect',function(){
+    /*self.socket.on('connect',function(){
       self.showNotification({
         content : "Connect"
       })
-    })
+    })*/
     self.socket.on('tail',function(data){
-      self.showNotification({
-        title : data.file_name,
-        content : data.line,
-        onclick : function(){
-          try{
-            var openUrl = self.server+"/browse?target="+data.target;
-            window.open(openUrl);
-            this.close();
-          }catch(e){
-            console.log(e);
-          }
-        }
-      });
+      self.onTailEvent(data);
     })
+  },
+  onTailEvent : function(data){
+    var self = this;
+    self.showNotification({
+      title : data.file_name,
+      content : data.line,
+      onclick : function(){
+        try{
+          var openUrl = self.server+"/browse?target="+data.target;
+          window.open(openUrl);
+          this.close();
+        }catch(e){
+          console.log(e);
+        }
+      },
+      url_params : {
+        target : data.target
+      }
+    });
   }
 }

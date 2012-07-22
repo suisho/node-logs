@@ -1,0 +1,48 @@
+<html>
+  <head>
+    <script type="text/javascript" src="/logs/jquery-1.7.2.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.css">
+  </head>
+  <body data-target="${target}" >
+    <div class="container" style="padding-left:5px;width: 300px;">
+      <h3 class="title">
+        ${title}
+      </h3>
+      <div class="message">
+        ${message}
+      </div>
+    </div>
+    <script>
+      $(function(){
+        var isExtraTime = false; //タイムアウト終了後か
+        var onMouse = false; // bodyにマウスがのってるか
+        function closeWindow(){
+          console.log("close");
+          window.close();
+        }
+        function closeOnTimeout(){
+          if(onMouse === false){
+            closeWindow();
+          }
+        }
+        var closeTimer = setTimeout(closeOnTimeout,3000);
+
+        $("body").click(function(){
+          var target = $("body").data("target");
+          if(target){
+            window.open("/browse?target="+target,"logs");
+          }
+          closeWindow();
+        })
+        $("body").mouseenter(function(){
+          clearTimeout(closeTimer);
+          onMouse = true;
+        })
+        $("body").mouseleave(function(){
+          onMouse = false;
+          closeTimer = setTimeout(closeOnTimeout,3000);
+        })
+      })
+    </script>
+  </body>
+</html>

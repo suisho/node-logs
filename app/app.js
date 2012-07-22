@@ -1,7 +1,6 @@
 var fs = require('fs');
 var express = require('express');
 
-
 var app = module.exports = express.createServer();
 
 var config = require('./config.js');
@@ -35,6 +34,7 @@ app.configure('production', function(){
 var routes = require('./routes');
 var setting = require('./routes/setting');
 app.get('/', routes.index);
+app.get('/notification', routes.notification);
 app.get('/browse(.:format)?', routes.browse);
 app.get('/setting/show', setting.show);
 app.post('/setting/save', setting.save);
