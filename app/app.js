@@ -11,6 +11,7 @@ config.loadConfig();
 // Configuration
 app.configure(function(){
   app.use(express.static(__dirname + '/public'));
+  app.use(express.static(__dirname + '../../client'));
   app.use(express.logger());
   app.use(express.bodyParser());
   app.use(express.methodOverride());
