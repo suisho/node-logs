@@ -7,9 +7,10 @@
       <div class="subnav">
         <div class="subnav subnav-fixed">
           <ul class="nav nav-pills">
+
             {{each(_target,filename) target_all}}
               {{if filename }}
-                <li class="{{if target == _target }}active{{/if}}">
+                <li class="{{if target === _target }}active{{/if}}">
                   <a href="/browse?target=${_target}">${filename}</a>
                 </li>
               {{/if}}
