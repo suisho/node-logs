@@ -7,6 +7,10 @@ exports.index = function(req, res){
   res.render('index', { title: ''});
 };
 
+exports.notification = function(req, res){
+  res.render('notification', req.query);
+}
+
 //browse
 exports.browse = function(req, res){
   //ファイル中身取得（できればケツだけとりたい）
