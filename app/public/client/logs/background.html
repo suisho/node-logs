@@ -1,0 +1,15 @@
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <script src="jquery-1.7.2.min.js"></script>
+    <script src="jquery.notification.js"></script>
+    <script src="client.js"></script>
+    <script>
+      $(function(){
+        var server = localStorage.host || "http://localhost:6607";
+        var client = new Client();
+        client.start(server);
+      });
+    </script>
+  </head>
+</html>

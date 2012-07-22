@@ -1,0 +1,47 @@
+<html>
+  {{partial() "head"}}
+  <body>
+    {{partial() "_menu"}}
+
+    <div class="container">
+      <div class="subnav">
+        <div class="subnav subnav-fixed">
+          <ul class="nav nav-pills">
+            {{each(_target,filename) target_all}}
+              {{if filename }}
+                <li class="{{if target == _target }}active{{/if}}">
+                  <a href="/browse?target=${_target}">${filename}</a>
+                </li>
+              {{/if}}
+            {{/each}}
+          </ul>
+        </div><!-- subnav -->
+      </div><!-- navbar -->
+
+      <header>
+        <h3>
+          File:${file_name}
+          {{if !all}}
+            <a href="/browse?target=${target}&all=1">Show all</a>
+          {{else}}
+            (All)
+          {{/if}}
+        </h3>
+      </header>
+      {{if error}}
+      <div class="alert alert-error">
+        ${error}
+      </div>
+      {{/if}}
+      <div class="log_block" data-target="${target}">
+        <ol>
+          {{each(i,line) tail_lines}}
+            {{if line}}
+              <li>${line}</li>
+            {{/if}}
+          {{/each}}
+        </ol>
+      </div>
+    </div>
+  </body>
+</html>

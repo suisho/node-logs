@@ -1,0 +1,12 @@
+{
+  "name": "logg",
+  "version": "0.0.1",
+  "dependencies": {
+    "express": "~2.5.11",
+    "socket.io": "~0.9.6",
+    "tailfd": "~0.0.1",
+    "jqtpl": "~1.1.0",
+    "node.extend": "~1.0.0"
+  },
+  "engine": "node 0.8.x"
+}

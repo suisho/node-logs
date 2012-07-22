@@ -1,0 +1,9 @@
+{
+  "name": "Logs Chrome Notification",
+  "version": "2",
+  "description": "",
+  "permissions": ["tabs", "notifications", "background","http://*/*"],
+  "options_page": "options.html",
+  "background": { "page": "background.html" },
+  "manifest_version": 1
+}

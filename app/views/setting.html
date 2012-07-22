@@ -1,0 +1,23 @@
+<html>
+  {{partial "head"}}
+  <body>
+    {{partial "menu"}}
+    <div class="container">
+      <form action="/setting/save" class="well form-horizontal" method="POST">
+        <fieldset>
+          <div class="control-group">
+            <label class="control-label">
+              Target Log files
+            </label>
+            <textarea name="targets" class="input-xxlarge" rows="10">${targets}</textarea>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" >
+              Save
+            </button>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+  </body>
+</html>
