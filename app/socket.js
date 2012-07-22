@@ -8,7 +8,7 @@ var _blockTailing = {};
 function setBlock(target){
   setTimeout(function(){
     _blockTailing[target] = false;
-  },1000);
+  },3000);
   _blockTailing[target] = true;
 }
 
@@ -17,11 +17,11 @@ exports.tail = function(data){
   // ブロッキングはtargetごとで行う。
   var target = data.target;
   if(_blockTailing[target] == true){
-    //console.log("skip");
+    console.log("skip");
     return;
   }
-  console.log(data);
-  setBlock(data.target);
+  console.log(target, data);
+  setBlock(target);
   io.sockets.emit('tail', data);
 };
 
