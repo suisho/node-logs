@@ -15,7 +15,7 @@ module.exports = {
 
   defaultConfig : function(){
     return {
-      port : 5607,
+      port : 5907, // LOGS 5907
       target : {}
     }
   },
@@ -31,8 +31,12 @@ module.exports = {
     this.eventEmitter.emit('load');
   },
 
-  get : function(key){
-    return this.config[key];
+  get : function(key, defaultValue){
+    var value = this.config[key];
+    if(value === undefined){
+      return defaultValue;
+    }
+    return value;
   },
 
   set : function(key, value){
