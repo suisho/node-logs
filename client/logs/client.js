@@ -119,7 +119,7 @@ Client.prototype = {
       content : data.line,
       onclick : function(){
         try{
-          var openUrl = self.server+"/browse?target="+data.target;
+          var openUrl = self.server+"/log/browse?target="+data.target;
           window.open(openUrl);
           this.close();
         }catch(e){

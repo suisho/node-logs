@@ -33,9 +33,10 @@ app.configure('production', function(){
 //routing
 var routes = require('./routes');
 var setting = require('./routes/setting');
+var log = require('./routes/log');
 app.get('/', routes.index);
 app.get('/notification', routes.notification);
-app.get('/browse(.:format)?', routes.browse);
+app.get('/log/browse(.:format)?', log.browse);
 app.get('/setting/show', setting.show);
 app.post('/setting/save', setting.save);
 
