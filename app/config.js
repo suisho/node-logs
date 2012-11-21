@@ -6,7 +6,7 @@ var util = require('util');
 
 module.exports = {
   config : {},
-  targets : [],
+  targets : [], // configの生情報とは違う。
   revTargetMap : {},
   filePath : "./config.json",
   eventEmitter : new events.EventEmitter(),
@@ -27,6 +27,7 @@ module.exports = {
     var merged = extend(this.defaultConfgi, config);
     this.config = merged;
     this.targets = this.config.targets;
+    //this.targets.unshift("All");
     this.createTargetMap();
     this.eventEmitter.emit('load');
   },
@@ -60,7 +61,7 @@ module.exports = {
   },
 
   allTargets : function(){
-    return this.targets;
+    return this.targets ;
   },
 
   getFilePathByTarget : function(target){

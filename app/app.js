@@ -1,4 +1,5 @@
 var fs = require('fs');
+var util = require('util');
 var express = require('express');
 
 var app = module.exports = express.createServer();
@@ -34,10 +35,14 @@ app.configure('production', function(){
 var routes = require('./routes');
 var setting = require('./routes/setting');
 var log = require('./routes/log');
+
 app.get('/', routes.index);
 app.get('/notification', routes.notification);
-app.get('/log/browse(.:format)?', log.browse);
-app.get('/setting/show', setting.show);
+
+app.get('/log/all', log.all);
+app.get('/log/browse.:format?', log.browse);
+
+app.get('/setting/show.:format?', setting.show);
 app.post('/setting/save', setting.save);
 
 //listen socket
@@ -57,3 +62,4 @@ config.eventEmitter.on('load',function(){
   console.log("reload config");
   exports.tailf.start();
 });
+

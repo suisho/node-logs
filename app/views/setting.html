@@ -9,21 +9,21 @@
             <label class="control-label">
               Target Log files
             </label>
-            <textarea name="targets" class="input-xxlarge" rows="10">${targets}</textarea>
+            {{partial({name:"targets",values:targets}) "setting/_textarea"}}
           </div>
 
           <div class="control-group">
             <label class="control-label">
               Highlight Keywords
             </label>
-            <textarea name="highlight_keywords" class="input-xxlarge" rows="10">${highlight_keywords}</textarea>
+            {{partial({name:"highlight_keywords",values:highlight_keywords}) "setting/_textarea"}}
           </div>
 
           <div class="control-group">
             <label class="control-label">
               Ignore Keywords
             </label>
-            <textarea name="ignore_keywords" class="input-xxlarge" rows="10">${ignore_keywords}</textarea>
+            {{partial({name:"ignore_keywords",values:ignore_keywords}) "setting/_textarea"}}
           </div>
 
           <div class="form-actions">
@@ -35,4 +35,5 @@
       </form>
     </div>
   </body>
+  <style
 </html>

@@ -1,20 +1,28 @@
 var config = require("../config.js");
 //setting
 exports.show = function(req, res){
-  var targets = config.allTargets().join("\n")
-  var highlightKeywords = config.get('highlight_keywords',[]).join("\n");
-  var ignoreKeywords = config.get('ignore_keywords',[]).join("\n");
+  var targets = config.get('targets',[]);
+  var highlightKeywords = config.get('highlight_keywords',[]);
+  var ignoreKeywords = config.get('ignore_keywords',[]);
 
   var params = {
-    targets : targets+"\n",
+    targets : targets,
     highlight_keywords : highlightKeywords,
     ignore_keywords : ignoreKeywords
   };
-  res.render('setting', params);
+  switch(req.params.format){
+    case "json":
+      res.json(params);
+      break
+    default:
+      res.render('setting', params);
+      break;
+  }
 }
 
 exports.save = function(req, res){
   var params = req.body;
+  console.log(params);
 
   //set targets
   var targetsArray = strToArray(params.targets);
@@ -40,7 +48,7 @@ exports.save = function(req, res){
  * @returns	{Array}
  */
 function strToArray(str){
-  var string = str.replace(/\r/g,"");
+  str = str.replace(/\r/g,"");
   var array = str.split("\n");
   //空白行を取り除く
   array = array.filter(function(elm){
