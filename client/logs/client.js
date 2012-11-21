@@ -36,21 +36,17 @@ Client.prototype = {
    */
   showNotification : function(notificationArgs){
     var defaultArgs = {
+      title : "Logs",
+      icon : "",
       onclick : function(){
         this.close();
       },
       onerror : function(e){
         console.log(e);
         this.close();
+        
       },
       timeout : 5000,
-      title : "Logs",
-      icon : ""
-    };
-    if(this.notificationBaseUrl){
-      defaultArgs.timeout = 0;
-      defaultArgs.onclick = undefined;
-      defaultArgs.onerror = undefined;
     }
     var mergedArgs = $.extend(defaultArgs, notificationArgs);
 
@@ -65,10 +61,32 @@ Client.prototype = {
         param = param + "&" + notificationArgsParam;
       }
       mergedArgs.url = this.notificationBaseUrl + "?" + param
+    }
+    console.log(mergedArgs.onclick);
+    //$.notification(mergedArgs).show();
+    var ntf = null;
+    try{
+      if(mergedArgs.url){
+        //createHTMLNotification使えなくなってんよー
+        ntf = webkitNotifications.createHTMLNotification(mergedArgs.url);
+      }
 
+    }catch(e){}
+    if(ntf == null){
+      ntf = webkitNotifications.createNotification(
+              mergedArgs.icon,
+              mergedArgs.title, 
+              mergedArgs.content);
+      ntf.onclick = mergedArgs.onclick;
+      ntf.onerror = mergedArgs.onerror;
     }
 
-    $.notification(mergedArgs).show();
+    if(mergedArgs.timeout){
+      setTimeout(function(){
+        ntf.close();
+      }, mergedArgs.timeout);
+    }
+    ntf.show();
   },
 
   /**
@@ -101,8 +119,15 @@ Client.prototype = {
    * socketにイベントバインディング
    */
   bindSocketEvent : function(){
+    this.socket = io.connect(self.server); //socketはひとつだけ持つ。
+
+    this.defaultBindSocketEvent();
+    this.addBindSocketEvent();
+  },
+  addBindSocketEvent : function(){
+  },
+  defaultBindSocketEvent : function(){
     var self = this;
-    self.socket = io.connect(self.server); //socketはひとつだけ持つ。
     /*self.socket.on('connect',function(){
       self.showNotification({
         content : "Connect"
@@ -117,7 +142,7 @@ Client.prototype = {
     self.showNotification({
       title : data.file_name,
       content : data.line,
-      onclick : function(){
+      /*onclick : function(){
         try{
           var openUrl = self.server+"/log/browse?target="+data.target;
           window.open(openUrl);
@@ -125,9 +150,10 @@ Client.prototype = {
         }catch(e){
           console.log(e);
         }
-      },
+      },*/
       url_params : {
-        target : data.target
+        target : data.target,
+        level : data.level
       }
     });
   }
