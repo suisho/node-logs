@@ -7,11 +7,13 @@
       <div class="subnav">
         <div class="subnav subnav-fixed">
           <ul class="nav nav-pills">
-
+            <li class="{{if all_mode }}active{{/if}}">
+              <a href="/log/all">All</a>
+            </li>
             {{each(_target,filename) target_all}}
               {{if filename }}
-                <li class="{{if target === _target }}active{{/if}}">
-                  <a href="/browse?target=${_target}">${filename}</a>
+                <li class="{{if target == _target }}active{{/if}}">
+                  <a href="/log/browse?target=${_target}">${filename}</a>
                 </li>
               {{/if}}
             {{/each}}
@@ -21,11 +23,13 @@
 
       <header>
         <h3>
-          File:${file_name}
-          {{if !all}}
-            <a href="/browse?target=${target}&all=1">Show all</a>
+          {{if file_name}}
+            File:${file_name}
+            {{if resolved_file_name}}
+              <a target="_blank" href="${resolved_file_name}">Show raw file</a>
+            {{/if}}
           {{else}}
-            (All)
+
           {{/if}}
         </h3>
       </header>
@@ -34,8 +38,22 @@
         ${error}
       </div>
       {{/if}}
-      <div class="log_block" data-target="${target}">
-        <ol>
+      {{if disable_notification}}
+      <div class="alert alert-warning">
+        このwindowはnotificationしません
+      </div>
+      {{else}}
+      <div class="alert alert-info notification-permit">
+        このwindowはnotificationします(多重に開いてると多重に通知します。)
+      </div>
+      {{/if}}
+      <div>
+        <form class="well">
+          filter:<input type="text" id="filter" class="input-medium">
+        </form>
+      </div>
+      <div class="well log_block" id="log_${target}" data-target="${target}">
+        <ol class="logs">
           {{each(i,line) tail_lines}}
             {{if line}}
               <li>${line}</li>
@@ -43,6 +61,132 @@
           {{/each}}
         </ol>
       </div>
+      <button class="uncolored btn btn-inverse">
+        Uncolored
+      </button>
     </div>
+  <script>
+    $(function(){
+      var setting = {};
+      var scrollAnimating = false;
+      var disableNotification = "${disable_notfication}"
+
+      //setting読み込み。終了したらinitClient()する
+      $.ajax({
+        url : "/setting/show.json",
+        dataType : "json",
+        success : function(result){
+          setting = result;
+          initClient();
+          $.each(setting.highlight_keywords,function(){
+            $(".log_block").highlight(this);
+          });
+        }
+      })
+
+      if(permitLevel = window.webkitNotifications.checkPermission()){
+
+        var message = (permitLevel == 1)
+                    ? "このwindowはデスクトップ通知できますが、許可されていません。許可をするにはここをクリックしてください"
+                    : "このwindowはデスクトップ通知できますが、拒否されています。設定でなんとかしてください"
+        $(".notification-permit")
+          .removeClass("alert-info")
+          .addClass("alert-error")
+          .html(message);
+        if(permitLevel == 1){
+          $(".notification-permit").click(function () {
+            window.webkitNotifications.requestPermission();
+            $(".notification-permit").hide();
+          });
+        }else{
+          disableNotification = true;
+        }
+      }
+      //出力文字色を一定秒ごとに変更する
+      function createRandHslColor(){
+        return "hsl("+Math.random() * 360+",80%,30%)";
+      }
+      var randHslColor = createRandHslColor();
+      setInterval(function(){
+        randHslColor =  createRandHslColor();
+      },0);
+
+      function setScrollTimeout(){
+        //一番下までスクロール。
+        //TODO:今中途半端な場所だったらスクロールしない
+        setTimeout(function(){
+          if(scrollAnimating == false){
+            console.log("scroll");
+            scrollAnimating = true;
+            $(".log_block").stop().animate({
+              scrollTop :$(".logs").height()
+            },{
+              complete : function(){
+                scrollAnimating = false;
+              }
+            });
+          }
+        },1000);
+      }
+
+      //追加のbindingイベント
+      function bindingSocketEvent(){
+        /** @type {Client} */
+        var selfClient = this;
+        selfClient.socket.on('tail_raw',function(data){
+          setTimeout(function(){
+            if($("#log_"+data.target)){
+              var $logLine = $("<li>").css("color",randHslColor)
+                                      .addClass("log")
+                                      .addClass("colorful")
+                                      .text(data.line);
+              if(isKillLine(data.line)){
+                $logLine.addClass("dead");
+              }else{
+                $logLine.addClass("alive");
+              }
+              var $logBlock = $("#log_"+data.target)
+
+              if( $logBlock.length == 0 ){
+                $logBlock = $("#log_all");
+              }
+              var $logs = $logBlock.find(".logs")
+              $logs.append($logLine);
+              if($logs.find("li.alive").length > 100){
+                $logs.find("li.alive:first").removeClass("alive").addClass("dead");
+              }
+              setScrollTimeout();
+            }
+          },0);
+        });
+      }
+
+      function isKillLine(text){
+        var filter = $("#filter").val();
+        var regExp = new RegExp(filter);
+        if(filter == ""){
+          return false;
+        }
+        if(text.match(regExp)){
+          return false;
+        }
+        return true;
+      }
+
+      //開始
+      function initClient(){
+        var client = new Client();
+        client.notificationBaseUrl = "/notification";
+        client.disableNotification = disableNotification;
+        client.addBindSocketEvent = bindingSocketEvent;
+        client.start(""); //サーバー名は自身なのでいらない。
+      }
+
+      $(".uncolored").click(function(){
+        $(".log.colorful").css("color","").removeClass("colorful");
+      });
+
+    });
+  </script>
   </body>
 </html>

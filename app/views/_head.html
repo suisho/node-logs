@@ -2,28 +2,10 @@
   <script type="text/javascript" src="/logs/jquery-1.7.2.min.js"></script>
   <link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.css">
   <link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap-responsive.css">
+  <link rel="stylesheet" type="text/css" href="/css/style.css">
   <script rel="stylesheet" type="text/javascript" src="/bootstrap/js/bootstrap.js"></script>
   <script type="text/javascript" src="/socket.io/socket.io.js"></script>
   <script type="text/javascript" src="/logs/jquery.notification.js"></script>
   <script type="text/javascript" src="/logs/client.js"></script>
-  <style>
-
-  body{
-    padding-top: 50px;
-  }
-
-  @media (max-width: 979px){
-    body{
-     padding-top: 0px;
-    }
-  }
-
-  </style>
-  <script>
-    $(function(){
-      var client = new Client();
-      client.notificationBaseUrl = "/notification";
-      client.start(""); //サーバー名は自身なのでいらない。
-    });
-  </script>
+  <script type="text/javascript" src="/jquery.highlight-3.js"></script>
 </head>

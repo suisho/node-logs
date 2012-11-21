@@ -1,0 +1,27 @@
+body{
+  padding-top: 50px;
+}
+
+@media (max-width: 979px){
+  body{
+   padding-top: 0px;
+  }
+}
+
+.log_block{
+  height: 500px;
+  overflow-y : scroll;
+}
+.log_block .logs{
+  max-width: 1200px;
+}
+.log_block .logs li.dead{
+  display: none;
+}
+.logs .fresh{
+  font-weight: bold;
+  color: red;
+}
+.logs .highlight{
+  background: #FFFF66;
+}
