@@ -1,6 +1,8 @@
 var fs = require('fs');
 var http = require('http');
 var url = require('url');
+var path = require('path');
+var util = require('util');
 var config = require('../config.js');
 
 exports.all = function(req, res){
@@ -18,10 +20,13 @@ exports.browse = function(req, res){
   //ケツの方だけ出す。
   //強調語設定
   var target = req.query.target
-  var fileName = config.getFilePathByTarget(target); //ファイル名信用問題
-  var tailString = "";
+
+  var fileName = "";
   var tailLines = [];
   var error = undefined;
+
+  fileName = config.getFilePathByTarget(target);
+  var tailString = "";
   try{
     if(req.query.all == 1){
       tailString = fs.readFileSync(fileName, "UTF-8");
@@ -37,14 +42,14 @@ exports.browse = function(req, res){
   }catch(e){
     error = e;
   }
-
   var params = { tail_lines : tailLines,
                  target : target,
                  file_name : fileName,
-                 all : req.query.all,
-                 error : error
+                 resolved_file_name : path.resolve(fileName),
+                 disable_notification : req.query.disable_notification,
+                 error : error,
                };
-  switch(req.format){
+  switch(req.params.format){
     case "json":
       res.json(params);
       break
