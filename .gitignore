@@ -163,7 +163,7 @@ pip-log.txt
 .DS_Store
 
 node_modules
-occhan
-*.sublime*
-*.komodo*
 config.json
+
+#test fixture auto
+test/date
