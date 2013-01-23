@@ -3,6 +3,15 @@ var http = require('http');
 var url = require('url');
 var config = require('../config.js');
 
+exports.all = function(req, res){
+  var params = {
+    all : 1,
+    target : 'all',
+    target_all : config.allTargets()
+  }
+  res.render('browse',params);
+}
+
 //browse
 exports.browse = function(req, res){
   //ファイル中身取得（できればケツだけとりたい）
