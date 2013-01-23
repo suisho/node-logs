@@ -33,6 +33,9 @@
           {{/if}}
         </h3>
       </header>
+      <!-- todo: conclude alert message"-->
+      <div class="alert message-box">
+      </div>
       {{if error}}
       <div class="alert alert-error">
         ${error}
@@ -85,10 +88,9 @@
       })
 
       if(permitLevel = window.webkitNotifications.checkPermission()){
-
         var message = (permitLevel == 1)
                     ? "このwindowはデスクトップ通知できますが、許可されていません。許可をするにはここをクリックしてください"
-                    : "このwindowはデスクトップ通知できますが、拒否されています。設定でなんとかしてください"
+                    : "このwindowはデスクトップ通知できますが、拒否されています。設定を変更して下さい["
         $(".notification-permit")
           .removeClass("alert-info")
           .addClass("alert-error")
@@ -159,6 +161,10 @@
             }
           },0);
         });
+        selfClient.socket.on('disconnect',function(){
+          console.log("disc");
+          $(".message-box").show().text("切断されました").addClass("alert-error");
+        })
       }
 
       function isKillLine(text){
