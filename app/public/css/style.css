@@ -25,3 +25,7 @@ body{
 .logs .highlight{
   background: #FFFF66;
 }
+
+.message-box{
+  display: none;
+}

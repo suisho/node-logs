@@ -2,45 +2,96 @@
   <head>
     <script type="text/javascript" src="/logs/jquery-1.7.2.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.css">
+    <style>
+    .container{
+      width : 290px;
+      padding: 5px;
+      padding-top:12px;
+    }
+    body{
+      overflow : hidden;
+    }
+    a.alert{
+      display: block;
+    }
+    a:hover{
+      cursor: pointer;
+      font-weight: bold;
+      text-decoration: underline;
+    }
+    /*label風アラート*/
+    a,
+    #log-notification.alert{
+      color : white;
+      text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    }
+    body.level-error,
+    #log-notification.alert.alert-error{
+      background: #B94A48;
+    }
+    body.level-warning,
+    #log-notification.alert.alert-warning{
+      background: #F89406;
+    }
+    body.level-info,
+    #log-notification.alert.alert-info{
+      background: #3A87AD;
+    }
+    </style>
   </head>
-  <body data-target="${target}" >
-    <div class="container" style="padding-left:5px;width: 300px;">
-      <h3 class="title">
-        ${title}
-      </h3>
-      <div class="message">
-        ${message}
-      </div>
+  <body  id="log-notification" data-target="${target}" class="level-${level}">
+    <div class="container" >
+      <div id="console"></div>
+      <a><!--/log/browse?target=${target}-->
+        <button class="close" data-dismiss="alert">×</button>
+        <h4 class="alert-heading title">
+          ${title}
+        </h4>
+        <div>
+        </div>
+        <div class="message">
+          ${message}
+        </div>
+      </a>
     </div>
     <script>
       $(function(){
         var isExtraTime = false; //タイムアウト終了後か
         var onMouse = false; // bodyにマウスがのってるか
+        var closeTime = 5000;
+
         function closeWindow(){
           console.log("close");
           window.close();
         }
+
         function closeOnTimeout(){
           if(onMouse === false){
             closeWindow();
           }
         }
-        var closeTimer = setTimeout(closeOnTimeout,3000);
 
+        var closeTimer = setTimeout(closeOnTimeout,closeTime);
         $("body").click(function(){
-          var target = $("body").data("target");
-          if(target){
-            window.open("/browse?target="+target,"logs");
-          }
           closeWindow();
+        })
+        $(".close").click(function(){
+          closeWindow();
+          return false;
+        })
+        $("#log-notification").click(function(){
+          var target = $("body").data("target");
+
+          window.open("/log/browse?disable_notification=1&target="+target,"logs");
         })
         $("body").mouseenter(function(){
           clearTimeout(closeTimer);
           onMouse = true;
         })
+
         $("body").mouseleave(function(){
           onMouse = false;
-          closeTimer = setTimeout(closeOnTimeout,3000);
+          closeTimer = setTimeout(closeOnTimeout,closeTime);
         })
       })
     </script>
